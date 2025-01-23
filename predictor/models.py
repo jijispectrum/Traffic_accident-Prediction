@@ -1,14 +1,18 @@
 from django.db import models
 
-class AccidentRecord(models.Model):
-    # Fields for the accident record
+class TrafficData(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
-    location = models.CharField(max_length=255)
-    weather_condition = models.CharField(max_length=255)
-    description = models.TextField()
-    severity = models.IntegerField()  # Predicted severity level
-    datetime = models.DateTimeField(auto_now_add=True)  # Timestamp of the record
+    traffic_volume = models.IntegerField()
+    speed_limit = models.IntegerField()
+    visibility = models.IntegerField()
+    Weather_condition = models.CharField(max_length=100)
+    lighting_condition = models.CharField(max_length=100)
+    accident_severity = models.IntegerField()
 
     def __str__(self):
-        return f"Accident at {self.location} with severity {self.severity}"
+        return f"Accident {self.id} - {self.latitude}, {self.longitude}"
+
+    class Meta:
+        verbose_name = 'Traffic Data'
+        verbose_name_plural = 'Traffic Data'

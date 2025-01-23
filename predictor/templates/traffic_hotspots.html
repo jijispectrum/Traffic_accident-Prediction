@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Hotspot Prediction</title>
+</head>
+<body>
+    <h1>Predict Traffic Hotspot</h1>
+
+    <!-- Form for user input -->
+    <form method="POST">
+        {% csrf_token %}
+        <label for="latitude">Latitude:</label>
+        <input type="text" id="latitude" name="latitude" required><br><br>
+
+        <label for="longitude">Longitude:</label>
+        <input type="text" id="longitude" name="longitude" required><br><br>
+
+        <label for="traffic_volume">Traffic Volume:</label>
+        <input type="text" id="traffic_volume" name="traffic_volume" required><br><br>
+
+        <label for="speed_limit">Speed Limit:</label>
+        <input type="text" id="speed_limit" name="speed_limit" required><br><br>
+
+        <label for="visibility">Visibility:</label>
+        <input type="text" id="visibility" name="visibility" required><br><br>
+
+        <label for="weather_condition">Weather Condition (0=Clear, 1=Overcast, 2=Rain, 3=Fog):</label>
+        <input type="text" id="weather_condition" name="weather_condition" required><br><br>
+
+        <label for="lighting_condition">Lighting Condition (0=Daylight, 1=Night):</label>
+        <input type="text" id="lighting_condition" name="lighting_condition" required><br><br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if cluster is not none %}
+        <h2>Predicted Cluster (Hotspot): {{ cluster }}</h2>
+    {% endif %}
+</body>
+</html>
