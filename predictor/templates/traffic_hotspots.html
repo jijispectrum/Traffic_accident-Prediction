@@ -4,39 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traffic Hotspot Prediction</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .result h2 {
+            color: #333;
+        }
+        #map {
+            height: 400px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Predict Traffic Hotspot</h1>
+    <h1>Traffic Hotspot Prediction</h1>
 
     <!-- Form for user input -->
     <form method="POST">
         {% csrf_token %}
         <label for="latitude">Latitude:</label>
-        <input type="text" id="latitude" name="latitude" required><br><br>
+        <input type="text" id="latitude" name="latitude" placeholder="Enter Latitude" required>
 
         <label for="longitude">Longitude:</label>
-        <input type="text" id="longitude" name="longitude" required><br><br>
+        <input type="text" id="longitude" name="longitude" placeholder="Enter Longitude" required>
 
         <label for="traffic_volume">Traffic Volume:</label>
-        <input type="text" id="traffic_volume" name="traffic_volume" required><br><br>
+        <input type="text" id="traffic_volume" name="traffic_volume" placeholder="Enter Traffic Volume" required>
 
         <label for="speed_limit">Speed Limit:</label>
-        <input type="text" id="speed_limit" name="speed_limit" required><br><br>
+        <input type="text" id="speed_limit" name="speed_limit" placeholder="Enter Speed Limit" required>
 
         <label for="visibility">Visibility:</label>
-        <input type="text" id="visibility" name="visibility" required><br><br>
+        <input type="text" id="visibility" name="visibility" placeholder="Enter Visibility" required>
 
-        <label for="weather_condition">Weather Condition (0=Clear, 1=Overcast, 2=Rain, 3=Fog):</label>
-        <input type="text" id="weather_condition" name="weather_condition" required><br><br>
+        <label for="weather_condition">Weather Condition:</label>
+        <select id="weather_condition" name="weather_condition" required>
+            <option value="Clear">Clear</option>
+            <option value="Overcast">Overcast</option>
+            <option value="Rain">Rain</option>
+            <option value="Fog">Fog</option>
+        </select>
 
-        <label for="lighting_condition">Lighting Condition (0=Daylight, 1=Night):</label>
-        <input type="text" id="lighting_condition" name="lighting_condition" required><br><br>
+        <label for="lighting_condition">Lighting Condition:</label>
+        <select id="lighting_condition" name="lighting_condition" required>
+            <option value="Daylight">Daylight</option>
+            <option value="Night">Night</option>
+        </select>
 
-        <button type="submit">Predict</button>
+        <button type="submit">Predict Hotspot</button>
     </form>
 
+    <!-- Display prediction result -->
     {% if cluster is not none %}
-        <h2>Predicted Cluster (Hotspot): {{ cluster }}</h2>
+        <div class="result">
+            <h2>Predicted Cluster (Hotspot): {{ cluster }}</h2>
+        </div>
+
+        <!-- Map container -->
+        <div id="map"></div>
+
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script>
+            // Initialize the map
+            var map = L.map('map').setView([{{ latitude }}, {{ longitude }}], 13); // Center the map at the predicted location
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add a marker for the predicted hotspot
+            var marker = L.marker([{{ latitude }}, {{ longitude }}]).addTo(map);
+            marker.bindPopup("<b>Cluster:</b> {{ cluster }}<br><b>Location:</b> {{ latitude }}, {{ longitude }}").openPopup();
+        </script>
     {% endif %}
 </body>
 </html>
